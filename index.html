@@ -54,8 +54,8 @@
       gap: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
-    .logo-container { display: flex; align-items: center; gap: 15px; }
-    .logo-img { height: 65px; width: auto; object-fit: contain; border-radius: 4px; }
+    .logo-container { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+    .logo-img { height: 65px; width: auto; max-width: 120px; object-fit: contain; border-radius: 4px; display: block; }
     .logo-container h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 4px; color: white; }
     
     .header-tools { display: flex; align-items: center; gap: 12px; flex-grow: 1; max-width: 600px; justify-content: flex-end;}
@@ -204,16 +204,23 @@
     .backup-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
 
     @media (max-width: 768px) {
-      header { flex-direction: column; padding: 20px; gap: 15px; }
-      .header-tools { width: 100%; flex-wrap: wrap; justify-content: center; }
-      .search-bar { order: 3; }
-      .size-filter-select { order: 1; width: 100%; }
-      .db-status { order: 4; width: 100%; justify-content: center; }
+      header { flex-direction: column; padding: 15px; gap: 12px; text-align: center; }
+      .logo-container { width: 100%; justify-content: center; margin-bottom: 2px; }
+      .logo-img { height: 55px; width: auto; max-width: 100px; margin: 0 auto; }
+      .logo-container h1 { font-size: 2.2rem; text-align: center; }
+      .header-tools { width: 100%; flex-direction: column; gap: 8px; }
+      .search-bar { width: 100%; order: 2; }
+      .size-filter-select { width: 100%; order: 1; text-align: center; text-align-last: center; }
+      .db-status { width: 100%; order: 3; justify-content: center; }
+      
       .banner-slider-container { height: 180px; }
       .embedded-size-guide, .catalog-container { margin: 15px; padding: 15px; }
       .catalog-container { padding: 0; gap: 20px; }
       .interest-inputs-group { grid-template-columns: repeat(2, 1fr); }
       .admin-panel { padding: 20px 15px; }
+      
+      /* Forzar visibilidad y usabilidad de selectores en móviles */
+      .modal-card select { -webkit-appearance: listbox !important; appearance: listbox !important; background-image: none !important; padding-right: 10px !important; }
     }
   </style>
 </head>
@@ -490,15 +497,15 @@
       
       <form id="whatsappForm">
         <div class="form-group" style="margin-bottom: 15px;">
-          <label>Tu Nombre y Apellido</label>
+          <label for="clientName">Tu Nombre y Apellido</label>
           <input type="text" id="clientName" required placeholder="Ej: Juan Pérez">
         </div>
         <div class="form-group" style="margin-bottom: 15px;">
-          <label id="modalSizeLabel">¿Qué número necesitas?</label>
+          <label id="modalSizeLabel" for="selectedSize">¿Qué número necesitas?</label>
           <select id="selectedSize" required></select>
         </div>
         <div class="form-group" style="margin-bottom: 25px;">
-          <label>¿Cómo deseas abonar?</label>
+          <label for="selectedPaymentMethod">¿Cómo deseas abonar?</label>
           <select id="selectedPaymentMethod" required></select>
         </div>
         <button type="submit" class="btn-buy" style="background: var(--green); margin-bottom: 10px;">📲 Enviar Pedido por WhatsApp</button>
@@ -778,7 +785,6 @@
         const tieneStock = p.sizes && p.sizes.length > 0;
         let tallesTexto = tieneStock ? p.sizes.map(sz => `${sz}`).join(' - ') : 'Agotado';
         
-        // Alerta de stock crítico (Si solo queda un talle disponible)
         const isCriticalStock = tieneStock && p.sizes.length === 1;
 
         let discountHtml = '';
@@ -823,7 +829,6 @@
       });
     }
 
-    /* SISTEMA GESTIÓN DE CATEGORÍAS */
     function renderCategoryManager() {
       const container = document.getElementById('categoryManagerGrid'); container.innerHTML = '';
       if(categoriesOrderedList.length === 0) {
@@ -897,7 +902,6 @@
       update(ref(db, 'productos/' + id), { isPaused: !p.isPaused });
     };
 
-    /* REORDENADOR VISUAL LIBRE DE PRODUCTOS */
     function renderDragAndDropGrid() {
       const container = document.getElementById('dragSortGrid'); container.innerHTML = '';
       products.forEach((p, index) => {
@@ -1006,28 +1010,40 @@
 
     document.getElementById('whatsappForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = document.getElementById('clientName').value;
+      
+      if (!selectedProductForOrder) {
+        alert("Error: No se seleccionó ningún calzado.");
+        return;
+      }
+
+      const name = document.getElementById('clientName').value.trim();
       const sizeSelected = document.getElementById('selectedSize').value;
       const paymentSelected = document.getElementById('selectedPaymentMethod').value;
       const scale = selectedProductForOrder.sizeType || 'BR';
       
-      if(selectedProductForOrder) {
-        update(ref(db, 'productos/' + selectedProductForOrder.id), { whatsapp_clicks: increment(1) });
-        update(ref(db, `productos/${selectedProductForOrder.id}/requestedSizes/${sizeSelected}`), increment(1));
+      if (!sizeSelected) {
+        alert("Por favor, selecciona un número antes de continuar.");
+        return;
       }
 
+      update(ref(db, 'productos/' + selectedProductForOrder.id), { whatsapp_clicks: increment(1) });
+      update(ref(db, `productos/${selectedProductForOrder.id}/requestedSizes/${sizeSelected}`), increment(1));
+
       const msg = `📦 *NUEVO ENCARGO - DESNIVEL*
+
 ` +
                   `👤 *Cliente:* ${name}
 ` +
-                  `👟 *Modelo:* ${selectedProductForOrder.title}
+                  `** *Modelo:* ${selectedProductForOrder.title}
 ` +
                   `📏 *Número:* ${sizeSelected} [${scale}]
 ` +
                   `💳 *Opción de Pago:* ${paymentSelected}`;
 
-      window.open(`https://api.whatsapp.com/send?phone=${globalConfig.whatsappNumber}&text=${encodeURIComponent(msg)}`, '_blank');
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${globalConfig.whatsappNumber}&text=${encodeURIComponent(msg)}`;
+      window.open(whatsappUrl, '_blank');
       closeModal('orderOverlay');
+      document.getElementById('whatsappForm').reset();
     });
 
     window.openLightbox = function(src, id) {
@@ -1044,7 +1060,6 @@
       else { dot.className = "status-dot red"; txt.textContent = "Offline"; }
     });
 
-    /* ESTADISTICAS CON TOTALES AVANZADOS */
     function renderStats() {
       const tbody = document.getElementById('statsTableBody'); tbody.innerHTML = '';
       let totalClicks = 0;
@@ -1077,7 +1092,6 @@
         `;
       });
 
-      // Renderizar Tarjetas de Métricas de Dashboard
       document.getElementById('statTotalClicks').textContent = totalClicks;
       document.getElementById('statTotalRevenue').textContent = `$${totalRevenuePotential.toLocaleString('es-AR')}`;
       
@@ -1092,7 +1106,6 @@
       }
     };
 
-    /* SISTEMA DE BACKUP COMPLETAMENTE EN VIVO */
     window.exportCatalogBackup = function() {
       const rootDbRef = ref(db);
       get(rootDbRef).then((snapshot) => {
