@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Desnivel – Calzados Premium</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-cream: #F4F0EA;       
+      --leather-brown: #6E472D;  
+      --leather-hover: #543521;  
+      --dark-charcoal: #1C1A17;  
+      --off-white: #FAF9F6;      
+      --mid-gray: #7D7873;       
+      --light-gray: #D5CFC7;     
+      --green: #25D366;          
+      --red-del: #A33335;        
+      --alert-bg: #FFF3CD;
+      --alert-border: #FFEBAA;
+      --alert-text: #664D03;
+      --discount-tag: #E65100;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-cream); color: var(--dark-charcoal); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    
+    button, input, select, textarea { 
+      font-family: inherit; 
+      outline: none; 
+      -webkit-appearance: none; 
+      appearance: none;
+    }
+    button { cursor: pointer; border: none; background: none; }
+    select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%231C1A17' d='M0 0l5 5 5-5z'/></svg>"); background-repeat: no-repeat; background-position: right 15px center; background-size: 10px; padding-right: 35px !important; }
+
+    /* HEADER */
+    header { 
+      background: var(--dark-charcoal);
+      color: white; 
+      padding: 15px 40px; 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      min-height: 90px;
+      gap: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .logo-container { display: flex; align-items: center; gap: 15px; }
+    .logo-img { height: 65px; width: auto; object-fit: contain; border-radius: 4px; }
+    .logo-container h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 4px; color: white; }
+    
+    .header-tools { display: flex; align-items: center; gap: 12px; flex-grow: 1; max-width: 600px; justify-content: flex-end;}
+    .search-bar { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.15); font-size: 1rem; background: rgba(255, 255, 255, 0.95); color: var(--dark-charcoal); }
+    
+    .size-filter-select { padding: 11px 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); background: var(--leather-brown); color: white; font-weight: bold; cursor: pointer; font-size: 0.95rem; white-space: nowrap; }
+
+    .db-status { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; background: rgba(255,255,255,0.07); padding: 6px 12px; border-radius: 15px; letter-spacing: 1px;}
+    .status-dot { width: 11px; height: 11px; border-radius: 50%; background: #ccc; }
+    .status-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .status-dot.red { background: var(--red-del); box-shadow: 0 0 8px var(--red-del); }
+
+    /* BANNER SLIDER ROTATIVO */
+    .banner-slider-container { width: 100%; height: 320px; background: #eae4db; overflow: hidden; position: relative; display: none; border-bottom: 2px solid var(--light-gray); }
+    .banner-slide { width: 100%; height: 100%; position: absolute; top:0; left:0; opacity:0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; justify-content: center; }
+    .banner-slide.active { opacity: 1; z-index: 2; }
+    .banner-slide img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* GUÍA DE TALLES */
+    .embedded-size-guide { background: white; margin: 30px 40px 10px 40px; padding: 30px; border-radius: 8px; border: 1px solid var(--light-gray); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .embedded-size-guide h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; text-transform: uppercase; color: var(--dark-charcoal); margin-bottom: 12px; }
+    .important-alert { background: var(--alert-bg); border: 1px solid var(--alert-border); color: var(--alert-text); padding: 16px; border-radius: 6px; margin-bottom: 20px; font-size: 0.98rem; line-height: 1.5; font-weight: 500; }
+
+    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border-radius: 6px; border: 1px solid var(--light-gray); }
+    .size-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 1rem; min-width: 500px; }
+    .size-table th, .size-table td { border: 1px solid var(--light-gray); padding: 12px; }
+    .size-table th { background: var(--bg-cream); font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; font-weight: 700; }
+    .highlight-br { background: rgba(110,71,45,0.08); font-weight: bold; color: var(--leather-brown); }
+    .highlight-ar { background: #fffdf3; font-weight: bold; color: #8a6d1c; }
+
+    /* NAVEGACIÓN CATEGORÍAS */
+    .brand-nav { display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 20px 40px; background: var(--off-white); border-bottom: 1px solid var(--light-gray); scrollbar-width: none; }
+    .brand-nav::-webkit-scrollbar { display: none; }
+    .brand-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 600; text-transform: uppercase; padding: 8px 24px; border: 1px solid var(--light-gray); border-radius: 25px; color: var(--mid-gray); background: white; white-space: nowrap; }
+    .brand-tab:hover, .brand-tab.active { background: var(--dark-charcoal); color: white; border-color: var(--dark-charcoal); cursor: pointer; }
+
+    /* PANEL ADMINISTRADOR */
+    #adminPanel { display: none; background: white; border-bottom: 4px solid var(--leather-brown); padding: 30px 40px; }
+    body.admin-mode #adminPanel { display: block; }
+    .admin-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; color: var(--leather-brown); margin-bottom: 20px; font-weight: 700; text-transform: uppercase; }
+    
+    .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 5px; }
+    .admin-tab { padding: 10px 20px; background: var(--light-gray); font-weight: bold; border-radius: 4px; color: var(--dark-charcoal); white-space: nowrap; }
+    .admin-tab.active { background: var(--dark-charcoal); color: white; }
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+    
+    .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 0.85rem; font-weight: 600; }
+    .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid var(--light-gray); border-radius: 4px; background: var(--off-white); font-size: 1rem; }
+    
+    .type-selector-box { display: flex; gap: 10px; margin-bottom: 5px; }
+    .type-btn { flex: 1; padding: 12px; border: 1px solid var(--light-gray); border-radius: 4px; font-weight: bold; text-align: center; background: var(--off-white); transition: var(--transition); }
+    .type-btn.active { background: var(--leather-brown); color: white; border-color: var(--leather-brown); }
+
+    .sizes-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .size-label { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: var(--bg-cream); border: 1px solid var(--light-gray); border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .size-label input { display: none; }
+    .size-label:has(input:checked) { background: var(--leather-brown); color: white; border-color: var(--leather-brown); }
+
+    /* CONFIG GLOBAL */
+    .config-global-box { background: #fdfaf6; padding: 25px; border: 1px solid var(--light-gray); border-radius: 8px; margin-bottom: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: flex-end; }
+    .interest-inputs-group { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; grid-column: 1 / -1; background: #fff; padding: 15px; border: 1px dashed var(--light-gray); border-radius: 6px; }
+
+    /* DRAG & DROP REORDENADORES VISUALES */
+    .drag-sort-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 20px; background: #fafafa; border: 2px dashed var(--light-gray); border-radius: 8px; }
+    .drag-product-item { background: white; border: 1px solid var(--light-gray); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: grab; user-select: none; }
+    .drag-product-item:active { cursor: grabbing; transform: scale(0.95); opacity: 0.8; }
+    .drag-product-item img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 8px; pointer-events: none; }
+    .drag-product-item p { font-size: 0.8rem; font-weight: bold; color: var(--dark-charcoal); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+    .sortable-preview-container { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; padding: 10px; border: 1px solid var(--light-gray); border-radius: 6px; background: #fafafa; }
+    .sort-item { position: relative; width: 100px; height: 100px; border-radius: 4px; overflow: hidden; }
+    .sort-item img { width: 100%; height: 100%; object-fit: cover; }
+    .sort-item .del-img { position: absolute; top: 4px; right: 4px; background: rgba(163,51,53,0.9); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; }
+
+    .btn-save { grid-column: 1 / -1; background: var(--leather-brown); color: white; padding: 15px; font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; text-transform: uppercase; font-weight: 700; border-radius: 4px; margin-top: 10px; }
+    .btn-save:hover { background: var(--leather-hover); }
+
+    /* CATÁLOGO */
+    .catalog-container { padding: 30px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+    .product-card { background: var(--off-white); border: 1px solid var(--light-gray); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; transition: var(--transition); }
+    .product-card.paused { opacity: 0.5; border: 2px dashed var(--red-del); }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(110,71,45,0.15); }
+    
+    .image-frame { position: relative; aspect-ratio: 1; background: #fff; overflow: hidden; }
+    .card-img-slider { height: 100%; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .card-img-slider::-webkit-scrollbar { display: none; }
+    .card-img-slider img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; scroll-snap-align: start; }
+    
+    .badge { position: absolute; top: 15px; left: 15px; background: var(--dark-charcoal); color: white; padding: 6px 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; z-index: 3; border-radius: 4px; }
+    .discount-badge { position: absolute; top: 15px; right: 15px; background: var(--discount-tag); color: white; padding: 6px 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700; z-index: 3; border-radius: 4px; }
+    .size-type-badge { position: absolute; bottom: 15px; left: 15px; background: var(--leather-brown); color: white; padding: 5px 9px; font-size: 0.75rem; font-weight: bold; border-radius: 4px; z-index: 3; }
+
+    .info-box { padding: 22px; display: flex; flex-direction: column; flex-grow: 1; }
+    .cat-lbl { font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; text-transform: uppercase; color: var(--leather-brown); font-weight: 700; margin-bottom: 6px; }
+    .title-lbl { font-size: 1.35rem; font-weight: 700; margin-bottom: 8px; color: var(--dark-charcoal); }
+    .desc-lbl { font-size: 0.88rem; color: var(--mid-gray); margin-bottom: 12px; line-height: 1.4; flex-grow: 1; }
+
+    .sizes-avail { font-size: 0.9rem; font-weight: 700; color: var(--dark-charcoal); margin-bottom: 15px; background: rgba(110,71,45,0.06); padding: 10px 12px; border-radius: 6px; text-align: center; border: 1px solid rgba(110,71,45,0.1); }
+    .out-of-stock-banner { background: #eaeaea; color: #666; border: 1px solid #ccc; }
+    .critical-stock-alert { color: var(--red-del); background: #fdf2f2; border: 1px dashed var(--red-del); }
+
+    .price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
+    .price-val { font-size: 1.55rem; font-weight: 700; color: var(--dark-charcoal); }
+    .old-price-val { font-size: 1rem; color: var(--mid-gray); text-decoration: line-through; }
+    
+    .btn-buy { width: 100%; background: var(--dark-charcoal); color: white; padding: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; text-transform: uppercase; font-weight: 700; border-radius: 6px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    .btn-buy:hover { background: var(--leather-brown); }
+    .btn-buy:disabled { background: #cccccc; color: #888888; cursor: not-allowed; }
+
+    body.admin-mode .admin-actions { display: flex; }
+    .admin-actions { display: none; background: #fff0f0; padding: 10px 20px; border-top: 1px dashed var(--leather-brown); justify-content: space-between; gap: 10px; }
+    
+    .whatsapp-floating { position: fixed; bottom: 25px; right: 25px; background: var(--green); color: white; width: 62px; height: 62px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 99; text-decoration: none; }
+    footer { text-align: center; padding: 40px; background: var(--dark-charcoal); color: white; margin-top: 40px; }
+    .admin-login-btn { display: inline-block; margin-top: 15px; background: none; border: 1px solid var(--mid-gray); color: var(--light-gray); padding: 6px 18px; font-size: 0.8rem; border-radius: 20px; }
+
+    /* ESTILOS DRAG & DROP DE CATEGORÍAS */
+    .cat-manager-list { display: flex; flex-direction: column; gap: 10px; background: #fdfdfd; padding: 15px; border-radius: 8px; border: 2px dashed var(--light-gray); max-width: 650px; }
+    .cat-manager-item { display: flex; align-items: center; justify-content: space-between; background: white; padding: 12px 18px; border: 1px solid var(--light-gray); border-radius: 6px; cursor: grab; user-select: none; transition: background 0.2s; }
+    .cat-manager-item:active { cursor: grabbing; background: #f5f0eb; }
+    .cat-manager-actions { display: flex; gap: 8px; }
+    .cat-btn-action { font-size: 0.85rem; font-weight: bold; padding: 6px 12px; border-radius: 4px; }
+
+    /* MODALES RESPONSIVOS */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13,13,13,0.85); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.25s ease; padding: 15px; }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-card { background: white; padding: 30px 20px; border-radius: 8px; width: 100%; max-width: 600px; position: relative; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.4rem; color: var(--mid-gray); z-index: 10; }
+
+    /* METRICAS DASHBOARD */
+    .metrics-summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .metric-card { background: var(--off-white); border: 1px solid var(--light-gray); padding: 15px; border-radius: 6px; text-align: center; }
+    .metric-card h5 { font-size: 0.85rem; text-transform: uppercase; color: var(--mid-gray); margin-bottom: 5px; }
+    .metric-card p { font-size: 1.5rem; font-weight: bold; color: var(--leather-brown); }
+
+    .stat-table { width:100%; text-align:left; border-collapse:collapse; font-size: 0.9rem; }
+    .stat-table th, .stat-table td { padding: 12px; border-bottom: 1px solid #eee; }
+    .stat-table th { background: #fafafa; font-weight: bold; }
+    .conversion-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+
+    /* CONTENEDORES BACKUP */
+    .backup-box { border: 1px solid var(--light-gray); padding: 25px; border-radius: 8px; background: #fafafa; display: flex; flex-direction: column; gap: 15px; max-width: 500px; margin-top: 10px; }
+    .backup-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    @media (max-width: 768px) {
+      header { flex-direction: column; padding: 20px; gap: 15px; }
+      .header-tools { width: 100%; flex-wrap: wrap; justify-content: center; }
+      .search-bar { order: 3; }
+      .size-filter-select { order: 1; width: 100%; }
+      .db-status { order: 4; width: 100%; justify-content: center; }
+      .banner-slider-container { height: 180px; }
+      .embedded-size-guide, .catalog-container { margin: 15px; padding: 15px; }
+      .catalog-container { padding: 0; gap: 20px; }
+      .interest-inputs-group { grid-template-columns: repeat(2, 1fr); }
+      .admin-panel { padding: 20px 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR -->
+  <header>
+    <div class="logo-container">
+      <img src="WhatsApp Image 2026-05-29 at 13.46.59.jpeg" alt="Desnivel Logo" class="logo-img">
+      <h1>DESNIVEL</h1>
+    </div>
+    <div class="header-tools">
+      <select id="sizeFilterInput" class="size-filter-select" onchange="renderCatalog()">
+        <option value="all">Filtrar por Número (Todos)</option>
+      </select>
+      <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Buscar por modelo, marca...">
+      <div class="db-status">
+        <span class="status-dot yellow" id="dbStatusDot"></span>
+        <span id="dbStatusText">Conectando</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- BANNER ROTATIVO PÚBLICO -->
+  <section class="banner-slider-container" id="publicBannerSlider"></section>
+
+  <!-- GUÍA DE TALLES -->
+  <section class="embedded-size-guide">
+    <h3>Guía de Talles Oficial y Equivalencias</h3>
+    <div class="important-alert">
+      ⚠️ <strong>INFORMACIÓN DE COMPRA:</strong> Los calzados importados se rigen por talle <strong>Brasil [BR]</strong> y los nacionales por talle <strong>Argentina [AR]</strong>. Cada par exhibe claramente su escala. Verifique las medidas de su plantilla antes de encargar para asegurar una experiencia premium.
+    </div>
+
+    <div class="table-responsive">
+      <table class="size-table">
+        <thead>
+          <tr>
+            <th class="highlight-br">Talle Brasil (BR)</th>
+            <th class="highlight-ar">Equivalencia Argentina (AR)</th>
+            <th>Medida Plantilla Interna</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="highlight-br">34</td><td class="highlight-ar">35</td><td>22.5 cm</td></tr>
+          <tr><td class="highlight-br">35</td><td class="highlight-ar">36</td><td>23.0 cm</td></tr>
+          <tr><td class="highlight-br">36</td><td class="highlight-ar">37</td><td>24.0 cm</td></tr>
+          <tr><td class="highlight-br">37</td><td class="highlight-ar">38</td><td>24.5 cm</td></tr>
+          <tr><td class="highlight-br">38</td><td class="highlight-ar">39</td><td>25.5 cm</td></tr>
+          <tr><td class="highlight-br">39</td><td class="highlight-ar">40</td><td>26.5 cm</td></tr>
+          <tr><td class="highlight-br">40</td><td class="highlight-ar">41</td><td>27.0 cm</td></tr>
+          <tr><td class="highlight-br">41</td><td class="highlight-ar">42</td><td>27.5 cm</td></tr>
+          <tr><td class="highlight-br">42</td><td class="highlight-ar">43</td><td>28.5 cm</td></tr>
+          <tr><td class="highlight-br">43</td><td class="highlight-ar">44</td><td>29.0 cm</td></tr>
+          <tr><td class="highlight-br">44</td><td class="highlight-ar">45</td><td>30.0 cm</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PANEL DE ADMINISTRADOR -->
+  <section id="adminPanel">
+    <div class="admin-title">Panel de Control General Avanzado</div>
+    
+    <div class="config-global-box">
+      <div class="form-group">
+        <label style="color:var(--leather-brown); font-weight:700;">📲 Teléfono WhatsApp</label>
+        <input type="text" id="configWhatsAppNumber" placeholder="Ej: 5491123456789">
+      </div>
+      <div class="form-group">
+        <label style="color:var(--leather-brown); font-weight:700;">💰 % OFF Transferencia</label>
+        <input type="number" id="configTransferDescuento" placeholder="Ej: 10">
+      </div>
+      
+      <div class="interest-inputs-group">
+        <div class="form-group">
+          <label>📈 % Interés 3 Cuotas</label>
+          <input type="number" id="interest3" value="0">
+        </div>
+        <div class="form-group">
+          <label>📈 % Interés 6 Cuotas</label>
+          <input type="number" id="interest6" value="0">
+        </div>
+        <div class="form-group">
+          <label>📈 % Interés 9 Cuotas</label>
+          <input type="number" id="interest9" value="0">
+        </div>
+        <div class="form-group">
+          <label>📈 % Interés 12 Cuotas</label>
+          <input type="number" id="interest12" value="0">
+        </div>
+      </div>
+
+      <button type="button" class="btn-save" style="margin:0; padding:12px 15px; font-size:1rem;" onclick="saveGlobalConfig()">Guardar Configuraciones</button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('tab-productos')">Cargar Productos</button>
+      <button class="admin-tab" onclick="switchAdminTab('tab-categorias')">📁 Organizar Categorías</button>
+      <button class="admin-tab" onclick="switchAdminTab('tab-reordenar')">🔄 Reordenar Catálogo</button>
+      <button class="admin-tab" onclick="switchAdminTab('tab-banner')">🖼️ Gestionar Banners</button>
+      <button class="admin-tab" onclick="switchAdminTab('tab-stats')">📊 Métricas Financieras</button>
+      <button class="admin-tab" onclick="switchAdminTab('tab-backup')">💾 Copias de Seguridad (Backup)</button>
+    </div>
+
+    <!-- SECCIÓN FORMULARIO PRODUCTOS -->
+    <div id="tab-productos" class="admin-section active">
+      <form id="productForm">
+        <input type="hidden" id="pId">
+        <div class="admin-grid">
+          <div class="form-group">
+            <label>Categoría / Marca</label>
+            <input type="text" id="pCategory" required placeholder="Ej: Nike, Botines, Urbanas">
+          </div>
+          <div class="form-group">
+            <label>Nombre del Producto</label>
+            <input type="text" id="pTitle" required placeholder="Ej: Air Force 1">
+          </div>
+          <div class="form-group">
+            <label>Descripción corta</label>
+            <textarea id="pDesc" rows="2" placeholder="Detalles del calzado..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Precio Actual ($)</label>
+            <input type="number" id="pPrice" required placeholder="135000">
+          </div>
+          <div class="form-group">
+            <label>Precio Anterior ($ - Opcional)</label>
+            <input type="number" id="pOldPrice" placeholder="160000">
+          </div>
+          <div class="form-group">
+            <label>Etiqueta Promocional</label>
+            <select id="pBadge">
+              <option value="">Ninguna</option>
+              <option value="Nuevo">NUEVO</option>
+              <option value="Hot">HOT SALE</option>
+              <option value="Últimos Pares">ÚLTIMOS PARES</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>📐 Escala de los Talles que vas a cargar:</label>
+            <div class="type-selector-box">
+              <button type="button" id="btnTypeBR" class="type-btn active" onclick="setProductSizeType('BR')">Horma Escala BRASIL [BR]</button>
+              <button type="button" id="btnTypeAR" class="type-btn" onclick="setProductSizeType('AR')">Horma Escala ARGENTINA [AR]</button>
+            </div>
+            <input type="hidden" id="pSizeType" value="BR">
+          </div>
+          
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label id="sizesSectionLabel">Marcar Números Disponibles:</label>
+            <div class="sizes-grid" id="sizesContainer"></div>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Imágenes del Producto (Puedes subir varias para armar carrusel)</label>
+            <input type="file" id="pImgFile" accept="image/*" multiple>
+            <div id="multiImagePreview" class="sortable-preview-container"></div>
+          </div>
+        </div>
+        <button type="submit" class="btn-save" id="btnSubmit">Guardar Producto</button>
+        <button type="button" onclick="cancelEdit()" style="width:100%; margin-top:10px; padding:10px; border:1px solid #ccc; border-radius:4px;" id="btnCancelEdit" hidden>Cancelar Edición</button>
+      </form>
+    </div>
+
+    <!-- SECCIÓN: ORGANIZADOR VISUAL DE CATEGORÍAS -->
+    <div id="tab-categorias" class="admin-section">
+      <p style="margin-bottom:15px; font-size:0.9rem; color:var(--mid-gray);"><strong>Arrastra y suelta</strong> las categorías en la lista para definir el orden exacto en el que tus clientes las verán en el menú superior público.</p>
+      <div class="cat-manager-list" id="categoryManagerGrid"></div>
+    </div>
+
+    <!-- REORDENAR ELEMENTOS (PRODUCTOS) -->
+    <div id="tab-reordenar" class="admin-section">
+      <p style="margin-bottom:15px; font-size:0.9rem; color:var(--mid-gray);"><strong>Arrastra y suelta</strong> los calzados para alterar libremente la posición en la que aparecen en el catálogo.</p>
+      <div class="drag-sort-container" id="dragSortGrid"></div>
+    </div>
+
+    <!-- SECCIÓN DE BANNER -->
+    <div id="tab-banner" class="admin-section">
+      <p style="margin-bottom:15px; font-size:0.9rem; color:var(--mid-gray);">Sube imágenes promocionales para tu marquesina rotativa.</p>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label style="font-weight:bold;">Añadir Imagen de Banner:</label>
+        <input type="file" id="bannerFileInput" accept="image/*">
+      </div>
+      <label style="font-weight:bold; display:block; margin-bottom:10px;">Banners Activos Actualmente:</label>
+      <div id="adminBannersPreview" class="sortable-preview-container"></div>
+    </div>
+
+    <!-- ESTADÍSTICAS AVANZADAS MEJORADAS -->
+    <div id="tab-stats" class="admin-section">
+      <div class="metrics-summary-cards">
+        <div class="metric-card">
+          <h5>Facturación Interés Potencial 💰</h5>
+          <p id="statTotalRevenue">$0</p>
+        </div>
+        <div class="metric-card">
+          <h5>Total Clicks WhatsApp 📲</h5>
+          <p id="statTotalClicks">0</p>
+        </div>
+        <div class="metric-card">
+          <h5>Ticket Promedio de Interés 👟</h5>
+          <p id="statAverageTicket">$0</p>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap: wrap; gap:10px;">
+        <p style="font-size:0.9rem; color:var(--mid-gray);">Análisis detallado de rendimiento por calzado individual.</p>
+        <button type="button" style="background:var(--red-del); color:white; padding:8px 14px; border-radius:4px; font-weight:bold; font-size:0.8rem;" onclick="resetAllMetrics()">🔄 Reiniciar Métricas</button>
+      </div>
+      <div class="table-responsive">
+        <table class="stat-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Vistas 👁️</th>
+              <th>Clicks Wpp 📲</th>
+              <th>Conversión 📈</th>
+              <th>Talles Más Solicitados 🔥</th>
+            </tr>
+          </thead>
+          <tbody id="statsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECCIÓN COPIAS DE SEGURIDAD (BACKUP) -->
+    <div id="tab-backup" class="admin-section">
+      <p style="font-size:0.95rem; color:var(--mid-gray); margin-bottom:10px;">Protege y exporta la base de datos completa de tu sitio (productos, orden de categorías, banners y configuraciones) en un archivo local.</p>
+      
+      <div class="backup-box">
+        <h4 style="font-family:'Barlow Condensed', sans-serif; font-size:1.3rem; text-transform:uppercase; color:var(--leather-brown)">Opciones de Backup</h4>
+        <div class="backup-btn-group">
+          <button type="button" class="btn-save" style="margin:0; padding:10px 20px; font-size:0.95rem; background:#1e7e34;" onclick="exportCatalogBackup()">📥 Exportar Archivo de Respaldo</button>
+        </div>
+        <hr style="border:0; border-top:1px dashed var(--light-gray); margin:5px 0;">
+        <div class="form-group">
+          <label style="font-weight:bold; font-size:0.85rem; margin-bottom:5px;">Restaurar desde archivo de respaldo (.json):</label>
+          <input type="file" id="backupFileInput" accept=".json" style="background:#fff; border:1px solid var(--light-gray); padding:8px;">
+        </div>
+        <button type="button" class="btn-save" style="margin:0; padding:10px 20px; font-size:0.95rem; background:var(--red-del);" onclick="importCatalogBackup()">📤 Importar / Restaurar Respaldo</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTROS DE CATEGORÍA -->
+  <nav class="brand-nav" id="brandNav">
+    <button class="brand-tab active" data-filter="all">TODOS</button>
+  </nav>
+
+  <!-- CATÁLOGO -->
+  <main class="catalog-container" id="catalogGrid">
+    <div style="padding:20px; text-align:center;">Abriendo catálogo premium...</div>
+  </main>
+
+  <a href="#" id="floatingWppLink" class="whatsapp-floating" target="_blank">💬</a>
+
+  <footer>
+    <p>© 2026 Desnivel Calzados.</p>
+    <button class="admin-login-btn" onclick="toggleAdmin()">Modo Administrador</button>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="modal-overlay" id="lightboxOverlay">
+    <img src="" id="lightboxImg" style="max-width:90%; max-height:80vh; border-radius:4px;">
+    <button class="close-btn" style="color:white; top:20px; right:20px;" onclick="closeModal('lightboxOverlay')">✕</button>
+  </div>
+
+  <!-- MODAL DE PEDIDO -->
+  <div class="modal-overlay" id="orderOverlay">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('orderOverlay')">✕</button>
+      <h3 id="orderTitle">Encargar</h3>
+      <p id="orderPrice" style="font-size: 1.2rem; font-weight: bold; margin-top:5px; color: var(--leather-brown);"></p>
+      
+      <div id="orderFinanceModal" style="font-size:0.85rem; font-weight:500; color:#2e7d32; margin-top:10px; margin-bottom:15px; line-height:1.4;"></div>
+      
+      <form id="whatsappForm">
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Tu Nombre y Apellido</label>
+          <input type="text" id="clientName" required placeholder="Ej: Juan Pérez">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label id="modalSizeLabel">¿Qué número necesitas?</label>
+          <select id="selectedSize" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom: 25px;">
+          <label>¿Cómo deseas abonar?</label>
+          <select id="selectedPaymentMethod" required></select>
+        </div>
+        <button type="submit" class="btn-buy" style="background: var(--green); margin-bottom: 10px;">📲 Enviar Pedido por WhatsApp</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, onValue, push, remove, update, increment, set, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBbgCtbelNc-hDWBCcfPSgzGUk4HC-ovYQ",
+      authDomain: "catalogo-desnivel.firebaseapp.com",
+      databaseURL: "https://catalogo-desnivel-default-rtdb.firebaseio.com",
+      projectId: "catalogo-desnivel"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db, 'productos');
+    const configGlobalRef = ref(db, 'config_global');
+    const bannersRef = ref(db, 'banners');
+    const categoryOrderRef = ref(db, 'category_order'); 
+
+    let products = [];
+    let bannersList = [];
+    let categoriesOrderedList = []; 
+    let currentFilter = "all";
+    let searchQuery = "";
+    let selectedProductForOrder = null;
+    let newProductImages = []; 
+    let bannerIntervalId = null;
+
+    let globalConfig = {
+      whatsappNumber: "5491123456789",
+      descuentoTransferencia: 10,
+      i3: 0, i6: 15, i9: 25, i12: 35
+    };
+
+    const selectFilter = document.getElementById('sizeFilterInput');
+    for (let i = 34; i <= 46; i++) {
+      const opt = document.createElement('option');
+      opt.value = i; opt.textContent = `Número ${i}`;
+      selectFilter.appendChild(opt);
+    }
+
+    onValue(configGlobalRef, (snapshot) => {
+      if(snapshot.val()) { globalConfig = { ...globalConfig, ...snapshot.val() }; }
+      document.getElementById('configWhatsAppNumber').value = globalConfig.whatsappNumber;
+      document.getElementById('configTransferDescuento').value = globalConfig.descuentoTransferencia;
+      document.getElementById('interest3').value = globalConfig.i3 || 0;
+      document.getElementById('interest6').value = globalConfig.i6 || 0;
+      document.getElementById('interest9').value = globalConfig.i9 || 0;
+      document.getElementById('interest12').value = globalConfig.i12 || 0;
+      
+      document.getElementById('floatingWppLink').href = `https://api.whatsapp.com/send?phone=${globalConfig.whatsappNumber}&text=Hola!`;
+      renderCatalog();
+    });
+
+    onValue(bannersRef, (snapshot) => {
+      bannersList = [];
+      const val = snapshot.val();
+      if(val) { for(let k in val) { bannersList.push({ id: k, src: val[k] }); } }
+      renderBannersPublic();
+      renderBannersAdmin();
+    });
+
+    onValue(categoryOrderRef, (snapshot) => {
+      categoriesOrderedList = snapshot.val() || [];
+      renderFilters();
+      renderCategoryManager();
+    });
+
+    window.saveGlobalConfig = function() {
+      const num = document.getElementById('configWhatsAppNumber').value.trim();
+      const descVal = parseFloat(document.getElementById('configTransferDescuento').value) || 0;
+      const i3Val = parseFloat(document.getElementById('interest3').value) || 0;
+      const i6Val = parseFloat(document.getElementById('interest6').value) || 0;
+      const i9Val = parseFloat(document.getElementById('interest9').value) || 0;
+      const i12Val = parseFloat(document.getElementById('interest12').value) || 0;
+
+      if(!num) { alert("Número inválido."); return; }
+
+      set(configGlobalRef, {
+        whatsappNumber: num,
+        descuentoTransferencia: descVal,
+        i3: i3Val, i6: i6Val, i9: i9Val, i12: i12Val
+      }).then(() => alert("¡Configuraciones guardadas!"));
+    };
+
+    function compressToWebP(file, maxWidth, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width; let height = img.height;
+          if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          callback(canvas.toDataURL('image/webp', 0.75));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('pImgFile').addEventListener('change', function(e) {
+      Array.from(e.target.files).forEach(file => {
+        compressToWebP(file, 750, (webpSrc) => {
+          newProductImages.push(webpSrc);
+          renderImageSortControls();
+        });
+      });
+    });
+
+    document.getElementById('bannerFileInput').addEventListener('change', function(e) {
+      if(!e.target.files[0]) return;
+      compressToWebP(e.target.files[0], 1200, (webpBannerSrc) => {
+        push(bannersRef, webpBannerSrc).then(() => {
+          alert("¡Banner añadido!");
+          document.getElementById('bannerFileInput').value = '';
+        });
+      });
+    });
+
+    function renderBannersPublic() {
+      const slider = document.getElementById('publicBannerSlider'); slider.innerHTML = '';
+      if(bannersList.length === 0) { slider.style.display = 'none'; return; }
+      slider.style.display = 'block';
+      bannersList.forEach((b, idx) => {
+        slider.innerHTML += `<div class="banner-slide ${idx === 0 ? 'active' : ''}"><img src="${b.src}"></div>`;
+      });
+      clearInterval(bannerIntervalId);
+      if(bannersList.length > 1) {
+        let currentIdx = 0;
+        bannerIntervalId = setInterval(() => {
+          const slides = slider.querySelectorAll('.banner-slide'); if(slides.length === 0) return;
+          slides[currentIdx].classList.remove('active');
+          currentIdx = (currentIdx + 1) % slides.length;
+          slides[currentIdx].classList.add('active');
+        }, 3000);
+      }
+    }
+
+    function renderBannersAdmin() {
+      const container = document.getElementById('adminBannersPreview'); container.innerHTML = '';
+      bannersList.forEach(b => {
+        container.innerHTML += `<div class="sort-item"><img src="${b.src}"><div class="del-img" onclick="deleteBanner('${b.id}')">✕</div></div>`;
+      });
+    }
+
+    window.deleteBanner = function(id) { if(confirm("¿Quitar esta imagen del banner?")) remove(ref(db, 'banners/' + id)); };
+    
+    function renderImageSortControls() {
+      const container = document.getElementById('multiImagePreview'); container.innerHTML = '';
+      newProductImages.forEach((imgSrc, idx) => {
+        container.innerHTML += `<div class="sort-item"><img src="${imgSrc}"><div class="del-img" onclick="removeImgFromOrder(${idx})">✕</div></div>`;
+      });
+    }
+    window.removeImgFromOrder = function(index) { newProductImages.splice(index, 1); renderImageSortControls(); };
+
+    function calcularFinanciamientoCompleto(precioBase) {
+      const p = parseFloat(precioBase);
+      return {
+        descTrans: Math.round(p * (1 - (globalConfig.descuentoTransferencia / 100))),
+        c3: Math.round((p * (1 + (globalConfig.i3 / 100))) / 3),
+        c6: Math.round((p * (1 + (globalConfig.i6 / 100))) / 6),
+        c9: Math.round((p * (1 + (globalConfig.i9 / 100))) / 9),
+        c12: Math.round((p * (1 + (globalConfig.i12 / 100))) / 12)
+      };
+    }
+
+    function generateAdminSizeCheckboxes() {
+      const container = document.getElementById('sizesContainer'); container.innerHTML = '';
+      const type = document.getElementById('pSizeType').value;
+      const start = type === 'BR' ? 34 : 35; const end = type === 'BR' ? 44 : 45;
+      for (let i = start; i <= end; i++) {
+        const lbl = document.createElement('label'); lbl.className = 'size-label';
+        lbl.innerHTML = `<input type="checkbox" class="size-cb" value="${i}">${i}`;
+        container.appendChild(lbl);
+      }
+    }
+
+    window.setProductSizeType = function(type) {
+      document.getElementById('pSizeType').value = type;
+      document.getElementById('btnTypeBR').classList.toggle('active', type === 'BR');
+      document.getElementById('btnTypeAR').classList.toggle('active', type === 'AR');
+      generateAdminSizeCheckboxes();
+    };
+
+    window.switchAdminTab = function(tabId) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelector(`[onclick="switchAdminTab('${tabId}')"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    };
+
+    window.toggleAdmin = function() {
+      if (document.body.classList.contains('admin-mode')) {
+        document.body.classList.remove('admin-mode'); renderCatalog();
+      } else {
+        if (prompt("Contraseña de Acceso:") === "admin") { document.body.classList.add('admin-mode'); renderCatalog(); }
+      }
+    };
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase(); renderCatalog();
+    });
+
+    onValue(dbRef, (snapshot) => {
+      products = []; const data = snapshot.val();
+      if (data) { for (let key in data) { products.push({ id: key, sortOrder: 0, ...data[key] }); } }
+      products.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+      
+      const categoriasDetectadas = [...new Set(products.map(p => p.category.trim()))].filter(Boolean);
+      let nuevoOrden = [...categoriesOrderedList];
+      let huboCambios = false;
+      categoriasDetectadas.forEach(c => {
+        if(!nuevoOrden.includes(c)) { nuevoOrden.push(c); huboCambios = true; }
+      });
+      nuevoOrden = nuevoOrden.filter(c => categoriasDetectadas.includes(c));
+      if(huboCambios || nuevoOrden.length !== categoriesOrderedList.length) {
+        set(categoryOrderRef, nuevoOrden);
+      } else {
+        renderFilters();
+        renderCategoryManager();
+      }
+
+      renderCatalog(); renderDragAndDropGrid(); renderStats();
+    });
+
+    function renderFilters() {
+      const nav = document.getElementById('brandNav');
+      nav.innerHTML = '<button class="brand-tab active" id="btnFilterAll">TODOS</button>';
+      document.getElementById('btnFilterAll').onclick = function() {
+        document.querySelectorAll('.brand-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active'); currentFilter = "all"; renderCatalog();
+      };
+      
+      categoriesOrderedList.forEach(cat => {
+        const btn = document.createElement('button'); btn.className = 'brand-tab'; btn.textContent = cat.toUpperCase();
+        if(currentFilter === cat.toLowerCase().trim()) btn.classList.add('active');
+        btn.onclick = function() {
+          document.querySelectorAll('.brand-tab').forEach(t => t.classList.remove('active'));
+          this.classList.add('active'); currentFilter = cat.toLowerCase().trim(); renderCatalog();
+        };
+        nav.appendChild(btn);
+      });
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalogGrid'); grid.innerHTML = '';
+      const filterSizeStr = document.getElementById('sizeFilterInput').value;
+      const isAdmin = document.body.classList.contains('admin-mode');
+
+      let filtrados = products.filter(p => {
+        if (!isAdmin && p.isPaused) return false;
+        const matchCat = currentFilter === 'all' || p.category.toLowerCase().trim() === currentFilter;
+        const matchSearch = p.title.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
+        let matchSizeSelect = (filterSizeStr === 'all') || (p.sizes && p.sizes.includes(filterSizeStr));
+        return matchCat && matchSearch && matchSizeSelect;
+      });
+
+      if(filtrados.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:40px; color:var(--mid-gray);">No hay productos en esta selección con el filtro activo.</p>';
+        return;
+      }
+
+      filtrados.forEach(p => {
+        const card = document.createElement('article'); card.className = `product-card ${p.isPaused ? 'paused' : ''}`;
+        const imgArray = Array.isArray(p.images) ? p.images : ['https://via.placeholder.com/400'];
+        const pScale = p.sizeType || 'BR'; 
+        
+        const tieneStock = p.sizes && p.sizes.length > 0;
+        let tallesTexto = tieneStock ? p.sizes.map(sz => `${sz}`).join(' - ') : 'Agotado';
+        
+        // Alerta de stock crítico (Si solo queda un talle disponible)
+        const isCriticalStock = tieneStock && p.sizes.length === 1;
+
+        let discountHtml = '';
+        if(p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
+          const pct = Math.round(((Number(p.oldPrice) - Number(p.price)) / Number(p.oldPrice)) * 100);
+          discountHtml = `<span class="discount-badge">▼ ${pct}% OFF</span>`;
+        }
+
+        let imagesHtml = imgArray.map(imgSrc => `<img src="${imgSrc}" onclick="openLightbox('${imgSrc}', '${p.id}')">`).join('');
+
+        card.innerHTML = `
+          <div class="image-frame">
+            ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+            ${discountHtml}
+            <span class="size-type-badge">${p.isPaused ? 'PAUSADO' : `Horma: [${pScale}]`}</span>
+            <div class="card-img-slider">
+              ${imagesHtml}
+            </div>
+          </div>
+          <div class="info-box">
+            <span class="cat-lbl">${p.category}</span>
+            <h2 class="title-lbl">${p.title}</h2>
+            <p class="desc-lbl">${p.desc || ''}</p>
+            <div class="sizes-avail ${!tieneStock ? 'out-of-stock-banner' : ''} ${isCriticalStock ? 'critical-stock-alert' : ''}">
+              ${tieneStock ? (isCriticalStock ? `🔥 ¡Último par disponible!: Número ${tallesTexto}` : `Talles: ${tallesTexto}`) : '⚠️ Sin stock disponible'}
+            </div>
+            <div class="price-row">
+              <span class="price-val">$${Number(p.price).toLocaleString('es-AR')}</span>
+              ${p.oldPrice ? `<span class="old-price-val">$${Number(p.oldPrice).toLocaleString('es-AR')}</span>` : ''}
+            </div>
+            <button class="btn-buy" ${!tieneStock ? 'disabled' : ''} onclick="openOrder('${p.id}')">
+              ${p.isPaused ? '🚫 Pausado' : (tieneStock ? '🛒 Encargar Calzado' : '❌ Sin Stock')}
+            </button>
+          </div>
+          <div class="admin-actions">
+            <button type="button" style="color:var(--red-del); font-weight:bold;" onclick="deleteProduct('${p.id}')">✕ Eliminar</button>
+            <button type="button" style="color:var(--discount-tag); font-weight:bold;" onclick="togglePauseProduct('${p.id}')">${p.isPaused ? '👁️ Activar' : '💤 Pausar'}</button>
+            <button type="button" onclick="editProduct('${p.id}')">✏️ Editar</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* SISTEMA GESTIÓN DE CATEGORÍAS */
+    function renderCategoryManager() {
+      const container = document.getElementById('categoryManagerGrid'); container.innerHTML = '';
+      if(categoriesOrderedList.length === 0) {
+        container.innerHTML = '<p style="color:var(--mid-gray);">No hay categorías creadas todavía.</p>';
+        return;
+      }
+      categoriesOrderedList.forEach((cat, index) => {
+        const cant = products.filter(p => p.category.trim() === cat).length;
+        const item = document.createElement('div'); 
+        item.className = 'cat-manager-item'; 
+        item.setAttribute('draggable', true);
+        item.dataset.index = index;
+        
+        item.innerHTML = `
+          <div><strong>☰ &nbsp; ${cat.toUpperCase()}</strong> <span style="color:var(--mid-gray); font-size:0.85rem;">(${cant} prod.)</span></div>
+          <div class="cat-manager-actions">
+            <button class="cat-btn-action" style="background:var(--bg-cream); color:var(--dark-charcoal);" onclick="renameCategoryPrompt('${cat}'); event.stopPropagation();">✏️ Renombrar</button>
+            <button class="cat-btn-action" style="background:var(--red-del); color:white;" onclick="deleteCategoryBulk('${cat}'); event.stopPropagation();">✕ Borrar Todo</button>
+          </div>
+        `;
+
+        item.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/category-index', index));
+        item.addEventListener('dragover', (e) => e.preventDefault());
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData('text/category-index'));
+          const toIdx = index;
+          if (fromIdx !== toIdx) {
+            const listCopy = [...categoriesOrderedList];
+            const movedCat = listCopy.splice(fromIdx, 1)[0];
+            listCopy.splice(toIdx, 0, movedCat);
+            set(categoryOrderRef, listCopy); 
+          }
+        });
+        container.appendChild(item);
+      });
+    }
+
+    window.renameCategoryPrompt = function(oldCatName) {
+      const newCatName = prompt(`Cambiar el nombre de la categoría "${oldCatName}" por:`, oldCatName);
+      if(!newCatName || newCatName.trim() === "" || newCatName.trim() === oldCatName) return;
+      
+      let count = 0;
+      products.forEach(p => {
+        if(p.category.trim() === oldCatName) {
+          count++;
+          update(ref(db, 'productos/' + p.id), { category: newCatName.trim() });
+        }
+      });
+      
+      let localIdx = categoriesOrderedList.indexOf(oldCatName);
+      if(localIdx !== -1) {
+        let listCopy = [...categoriesOrderedList];
+        listCopy[localIdx] = newCatName.trim();
+        set(categoryOrderRef, listCopy);
+      }
+      alert(`¡Completado! Se actualizaron ${count} productos.`);
+    };
+
+    window.deleteCategoryBulk = function(catName) {
+      if(confirm(`¿Estás seguro de eliminar TODOS los productos (${products.filter(p => p.category.trim() === catName).length}) de la categoría "${catName}"?`)) {
+        products.forEach(p => { if(p.category.trim() === catName) remove(ref(db, 'productos/' + p.id)); });
+        let listCopy = categoriesOrderedList.filter(c => c !== catName);
+        set(categoryOrderRef, listCopy);
+        alert("Categoría eliminada.");
+      }
+    };
+
+    window.togglePauseProduct = function(id) {
+      const p = products.find(prod => prod.id === id); if(!p) return;
+      update(ref(db, 'productos/' + id), { isPaused: !p.isPaused });
+    };
+
+    /* REORDENADOR VISUAL LIBRE DE PRODUCTOS */
+    function renderDragAndDropGrid() {
+      const container = document.getElementById('dragSortGrid'); container.innerHTML = '';
+      products.forEach((p, index) => {
+        const item = document.createElement('div'); item.className = 'drag-product-item'; item.setAttribute('draggable', true);
+        item.dataset.id = p.id; item.dataset.index = index;
+        const imgArray = Array.isArray(p.images) ? p.images : ['https://via.placeholder.com/100'];
+        item.innerHTML = `<img src="${imgArray[0]}"><p>${p.title}</p>`;
+        
+        item.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', index));
+        item.addEventListener('dragover', (e) => e.preventDefault());
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData('text/plain')); const toIdx = index;
+          if (fromIdx !== toIdx) {
+            const listCopy = [...products];
+            const movedItem = listCopy.splice(fromIdx, 1)[0]; 
+            listCopy.splice(toIdx, 0, movedItem);
+            
+            listCopy.forEach((prod, newOrder) => { 
+              update(ref(db, 'productos/' + prod.id), { sortOrder: newOrder }); 
+            });
+          }
+        });
+        container.appendChild(item);
+      });
+    }
+
+    document.getElementById('productForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('pId').value;
+      const btn = document.getElementById('btnSubmit');
+      const sizesSelected = Array.from(document.querySelectorAll('.size-cb:checked')).map(cb => cb.value);
+      
+      const productData = {
+        category: document.getElementById('pCategory').value.trim(), title: document.getElementById('pTitle').value,
+        desc: document.getElementById('pDesc').value, price: document.getElementById('pPrice').value,
+        oldPrice: document.getElementById('pOldPrice').value, badge: document.getElementById('pBadge').value,
+        sizeType: document.getElementById('pSizeType').value, sizes: sizesSelected, images: newProductImages
+      };
+
+      if (newProductImages.length === 0) { alert("Sube al menos una imagen."); return; }
+      btn.innerText = "Guardando..."; btn.disabled = true;
+
+      if (id) {
+        update(ref(db, 'productos/' + id), productData).then(() => { alert("¡Guardado!"); cancelEdit(); btn.innerText = "Guardar Producto"; btn.disabled = false; });
+      } else {
+        productData.views = 0; productData.whatsapp_clicks = 0; productData.isPaused = false; productData.sortOrder = products.length;
+        push(dbRef, productData).then(() => { alert("¡Creado!"); cancelEdit(); btn.innerText = "Guardar Producto"; btn.disabled = false; });
+      }
+    });
+
+    window.editProduct = function(id) {
+      const p = products.find(p => p.id === id); if(!p) return;
+      document.getElementById('pId').value = p.id;
+      document.getElementById('pCategory').value = p.category;
+      document.getElementById('pTitle').value = p.title;
+      document.getElementById('pDesc').value = p.desc || '';
+      document.getElementById('pPrice').value = p.price;
+      document.getElementById('pOldPrice').value = p.oldPrice || '';
+      document.getElementById('pBadge').value = p.badge || '';
+      setProductSizeType(p.sizeType || 'BR');
+      document.querySelectorAll('.size-cb').forEach(cb => { cb.checked = p.sizes ? p.sizes.includes(cb.value) : false; });
+      newProductImages = p.images ? [...p.images] : []; renderImageSortControls();
+      document.getElementById('btnCancelEdit').hidden = false; switchAdminTab('tab-productos');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.cancelEdit = function() {
+      document.getElementById('productForm').reset(); document.getElementById('pId').value = '';
+      newProductImages = []; document.getElementById('multiImagePreview').innerHTML = '';
+      document.getElementById('btnCancelEdit').hidden = true; setProductSizeType('BR');
+    };
+
+    window.deleteProduct = function(id) { if(confirm("¿Eliminar definitivamente?")) remove(ref(db, 'productos/' + id)); };
+
+    window.openOrder = function(id) {
+      const p = products.find(p => p.id === id); if(!p || p.isPaused) return;
+      selectedProductForOrder = p;
+      
+      document.getElementById('orderTitle').textContent = p.title;
+      document.getElementById('orderPrice').textContent = `Precio de Lista: $${Number(p.price).toLocaleString('es-AR')}`;
+      
+      const f = calcularFinanciamientoCompleto(p.price);
+      document.getElementById('orderFinanceModal').innerHTML = `
+        • Efectivo/Transferencia (${globalConfig.descuentoTransferencia}% OFF): $${f.descTrans.toLocaleString('es-AR')}<br>
+        • 3 cuotas fijas de: $${f.c3.toLocaleString('es-AR')} por mes.<br>
+        • 6 cuotas fijas de: $${f.c6.toLocaleString('es-AR')} por mes.<br>
+        • 12 cuotas fijas de: $${f.c12.toLocaleString('es-AR')} por mes.
+      `;
+      
+      const selectSize = document.getElementById('selectedSize');
+      selectSize.innerHTML = '<option value="">Elige tu número</option>';
+      const scale = p.sizeType || 'BR';
+      if (p.sizes) p.sizes.forEach(sz => { selectSize.innerHTML += `<option value="${sz}">${sz} [${scale}]</option>`; });
+
+      const selectPayment = document.getElementById('selectedPaymentMethod');
+      selectPayment.innerHTML = `
+        <option value="Transferencia / Efectivo ($${f.descTrans.toLocaleString('es-AR')})">Transferencia - $${f.descTrans.toLocaleString('es-AR')}</option>
+        <option value="3 Cuotas fijas (de $${f.c3.toLocaleString('es-AR')})">3 Cuotas - de $${f.c3.toLocaleString('es-AR')}</option>
+        <option value="6 Cuotas fijas (de $${f.c6.toLocaleString('es-AR')})">6 Cuotas - de $${f.c6.toLocaleString('es-AR')}</option>
+        <option value="12 Cuotas fijas (de $${f.c12.toLocaleString('es-AR')})">12 Cuotas - de $${f.c12.toLocaleString('es-AR')}</option>
+      `;
+
+      document.getElementById('orderOverlay').classList.add('open');
+    };
+
+    document.getElementById('whatsappForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('clientName').value;
+      const sizeSelected = document.getElementById('selectedSize').value;
+      const paymentSelected = document.getElementById('selectedPaymentMethod').value;
+      const scale = selectedProductForOrder.sizeType || 'BR';
+      
+      if(selectedProductForOrder) {
+        update(ref(db, 'productos/' + selectedProductForOrder.id), { whatsapp_clicks: increment(1) });
+        update(ref(db, `productos/${selectedProductForOrder.id}/requestedSizes/${sizeSelected}`), increment(1));
+      }
+
+      const msg = `📦 *NUEVO ENCARGO - DESNIVEL*
+` +
+                  `👤 *Cliente:* ${name}
+` +
+                  `👟 *Modelo:* ${selectedProductForOrder.title}
+` +
+                  `📏 *Número:* ${sizeSelected} [${scale}]
+` +
+                  `💳 *Opción de Pago:* ${paymentSelected}`;
+
+      window.open(`https://api.whatsapp.com/send?phone=${globalConfig.whatsappNumber}&text=${encodeURIComponent(msg)}`, '_blank');
+      closeModal('orderOverlay');
+    });
+
+    window.openLightbox = function(src, id) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxOverlay').classList.add('open');
+      if(id && !document.body.classList.contains('admin-mode')) update(ref(db, 'productos/' + id), { views: increment(1) });
+    };
+
+    window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
+
+    onValue(ref(db, ".info/connected"), (snap) => {
+      const dot = document.getElementById('dbStatusDot'); const txt = document.getElementById('dbStatusText');
+      if (snap.val() === true) { dot.className = "status-dot green"; txt.textContent = "Online"; } 
+      else { dot.className = "status-dot red"; txt.textContent = "Offline"; }
+    });
+
+    /* ESTADISTICAS CON TOTALES AVANZADOS */
+    function renderStats() {
+      const tbody = document.getElementById('statsTableBody'); tbody.innerHTML = '';
+      let totalClicks = 0;
+      let totalRevenuePotential = 0;
+      let countedProducts = 0;
+
+      products.forEach(p => {
+        const vistas = p.views || 0; const clics = p.whatsapp_clicks || 0;
+        totalClicks += clics;
+        totalRevenuePotential += (clics * Number(p.price));
+        if(clics > 0) countedProducts += clics;
+
+        let conversion = vistas > 0 ? ((clics / vistas) * 100).toFixed(1) : 0;
+        let colorConversion = "#7d7873";
+        if(conversion > 15) colorConversion = "var(--green)";
+        if(conversion > 0 && conversion <= 5) colorConversion = "var(--red-del)";
+
+        let tallesMasBuscadosArr = [];
+        if(p.requestedSizes) { for(let talleKey in p.requestedSizes) { tallesMasBuscadosArr.push(`${talleKey} (${p.requestedSizes[talleKey]} enc.)`); } }
+        let tallesTextoStats = tallesMasBuscadosArr.length > 0 ? tallesMasBuscadosArr.join(', ') : 'Ninguno';
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${p.title}</strong></td>
+            <td>${vistas}</td>
+            <td>${clics}</td>
+            <td><span class="conversion-tag" style="background:${colorConversion === 'var(--green)' ? '#e8f5e9' : (colorConversion === 'var(--red-del)' ? '#ffebee' : '#f5f5f5')}; color:${colorConversion};">${conversion}%</span></td>
+            <td style="color:var(--leather-brown); font-weight:500;">${tallesTextoStats}</td>
+          </tr>
+        `;
+      });
+
+      // Renderizar Tarjetas de Métricas de Dashboard
+      document.getElementById('statTotalClicks').textContent = totalClicks;
+      document.getElementById('statTotalRevenue').textContent = `$${totalRevenuePotential.toLocaleString('es-AR')}`;
+      
+      let averageTicket = countedProducts > 0 ? Math.round(totalRevenuePotential / countedProducts) : 0;
+      document.getElementById('statAverageTicket').textContent = `$${averageTicket.toLocaleString('es-AR')}`;
+    }
+
+    window.resetAllMetrics = function() {
+      if(confirm("¿Seguro que quieres reiniciar las métricas?")) {
+        products.forEach(p => { update(ref(db, 'productos/' + p.id), { views: 0, whatsapp_clicks: 0, requestedSizes: null }); });
+        alert("Métricas puestas a cero correctamente.");
+      }
+    };
+
+    /* SISTEMA DE BACKUP COMPLETAMENTE EN VIVO */
+    window.exportCatalogBackup = function() {
+      const rootDbRef = ref(db);
+      get(rootDbRef).then((snapshot) => {
+        if (!snapshot.exists()) { alert("No hay datos en la base de datos para exportar."); return; }
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(snapshot.val(), null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "backup-desnivel.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+      }).catch(err => alert("Error al exportar: " + err.message));
+    };
+
+    window.importCatalogBackup = function() {
+      const fileInput = document.getElementById('backupFileInput');
+      if (!fileInput.files || fileInput.files.length === 0) { alert("Por favor, selecciona un archivo backup-desnivel.json primero."); return; }
+      
+      if (!confirm("⚠️ ATENCIÓN: Al restaurar este archivo, vas a sobrescribir absolutamente toda la base de datos actual de Firebase con los datos del backup. ¿Estás seguro de continuar?")) return;
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsedData = JSON.parse(e.target.result);
+          set(ref(db), parsedData).then(() => {
+            alert("¡Copia de seguridad restaurada e importada con éxito en Firebase!");
+            fileInput.value = '';
+          }).catch(err => alert("Error al guardar en Firebase: " + err.message));
+        } catch (err) {
+          alert("Error: El archivo seleccionado no es un JSON de backup válido.");
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    generateAdminSizeCheckboxes();
+  </script>
+</body>
+</html>
