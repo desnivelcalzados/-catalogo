@@ -74,8 +74,25 @@
     .banner-slide.active { opacity: 1; z-index: 2; }
     .banner-slide img { width: 100%; height: 100%; object-fit: cover; }
 
+    /* SECCION A PEDIDO Y CIERRE */
+    .order-notice-banner {
+      background: white;
+      margin: 30px 40px 10px 40px;
+      padding: 22px;
+      border-radius: 8px;
+      border-left: 5px solid var(--leather-brown);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .order-notice-banner .notice-icon { font-size: 2.3rem; }
+    .order-notice-banner h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.6rem; text-transform: uppercase; color: var(--dark-charcoal); margin-bottom: 4px; }
+    .order-notice-banner p { font-size: 0.95rem; color: var(--mid-gray); margin-bottom: 8px; line-height: 1.4; }
+    .closing-date-badge { display: inline-block; background: var(--alert-bg); color: var(--alert-text); padding: 6px 14px; border-radius: 4px; font-weight: bold; font-size: 0.95rem; border: 1px solid var(--alert-border); }
+
     /* GUÍA DE TALLES */
-    .embedded-size-guide { background: white; margin: 30px 40px 10px 40px; padding: 30px; border-radius: 8px; border: 1px solid var(--light-gray); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .embedded-size-guide { background: white; margin: 15px 40px 10px 40px; padding: 30px; border-radius: 8px; border: 1px solid var(--light-gray); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
     .embedded-size-guide h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; text-transform: uppercase; color: var(--dark-charcoal); margin-bottom: 12px; }
     .important-alert { background: var(--alert-bg); border: 1px solid var(--alert-border); color: var(--alert-text); padding: 16px; border-radius: 6px; margin-bottom: 20px; font-size: 0.98rem; line-height: 1.5; font-weight: 500; }
 
@@ -146,6 +163,32 @@
     .card-img-slider::-webkit-scrollbar { display: none; }
     .card-img-slider img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; scroll-snap-align: start; }
     
+    /* FLECHAS DE NAVEGACIÓN EN PRODUCTO PC */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(28, 26, 23, 0.7);
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    .nav-arrow:hover { background: var(--leather-brown); }
+    .prev-arrow { left: 10px; }
+    .next-arrow { right: 10px; }
+    
+    @media (min-width: 769px) {
+      .image-frame:hover .nav-arrow { display: flex; }
+    }
+
     .badge { position: absolute; top: 15px; left: 15px; background: var(--dark-charcoal); color: white; padding: 6px 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; z-index: 3; border-radius: 4px; }
     .discount-badge { position: absolute; top: 15px; right: 15px; background: var(--discount-tag); color: white; padding: 6px 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700; z-index: 3; border-radius: 4px; }
     .size-type-badge { position: absolute; bottom: 15px; left: 15px; background: var(--leather-brown); color: white; padding: 5px 9px; font-size: 0.75rem; font-weight: bold; border-radius: 4px; z-index: 3; }
@@ -213,12 +256,12 @@
       .db-status { width: 100%; order: 3; justify-content: center; }
       
       .banner-slider-container { height: 180px; }
-      .embedded-size-guide, .catalog-container { margin: 15px; padding: 15px; }
+      .order-notice-banner, .embedded-size-guide, .catalog-container { margin: 15px; padding: 15px; }
+      .order-notice-banner { flex-direction: column; text-align: center; }
       .catalog-container { padding: 0; gap: 20px; }
       .interest-inputs-group { grid-template-columns: repeat(2, 1fr); }
       .admin-panel { padding: 20px 15px; }
       
-      /* Forzar visibilidad y usabilidad de selectores en móviles */
       .modal-card select { -webkit-appearance: listbox !important; appearance: listbox !important; background-image: none !important; padding-right: 10px !important; }
     }
   </style>
@@ -246,6 +289,17 @@
   </header>
 
   <section class="banner-slider-container" id="publicBannerSlider"></section>
+
+  <section class="order-notice-banner">
+    <div class="notice-icon">👟</div>
+    <div class="notice-content">
+      <h3>Modalidad 100% a Pedido</h3>
+      <p>No contamos con local físico aún. Trabajamos de forma exclusiva trayendo tus modelos favoritos directo bajo encargo premium.</p>
+      <div class="closing-date-badge">
+        ⏰ Próximo cierre de pedidos: <span id="publicClosingDate">Cargando...</span>
+      </div>
+    </div>
+  </section>
 
   <section class="embedded-size-guide">
     <h3>Guía de Talles Oficial y Equivalencias</h3>
@@ -290,6 +344,10 @@
       <div class="form-group">
         <label style="color:var(--leather-brown); font-weight:700;">💰 % OFF Transferencia</label>
         <input type="number" id="configTransferDescuento" placeholder="Ej: 10">
+      </div>
+      <div class="form-group">
+        <label style="color:var(--leather-brown); font-weight:700;">📅 Fecha Cierre de Pedidos</label>
+        <input type="text" id="configOrderClosingDate" placeholder="Ej: Domingo 15 de Junio">
       </div>
       
       <div class="interest-inputs-group">
@@ -531,7 +589,8 @@
     let globalConfig = {
       whatsappNumber: "5491123456789",
       descuentoTransferencia: 10,
-      i3: 0, i6: 15, i9: 25, i12: 35
+      i3: 0, i6: 15, i9: 25, i12: 35,
+      orderClosingDate: "A confirmar"
     };
 
     const selectFilter = document.getElementById('sizeFilterInput');
@@ -549,7 +608,9 @@
       document.getElementById('interest6').value = globalConfig.i6 || 0;
       document.getElementById('interest9').value = globalConfig.i9 || 0;
       document.getElementById('interest12').value = globalConfig.i12 || 0;
+      document.getElementById('configOrderClosingDate').value = globalConfig.orderClosingDate || "";
       
+      document.getElementById('publicClosingDate').textContent = globalConfig.orderClosingDate || "A confirmar";
       document.getElementById('floatingWppLink').href = `https://api.whatsapp.com/send?phone=${globalConfig.whatsappNumber}&text=Hola!`;
       renderCatalog();
     });
@@ -575,13 +636,15 @@
       const i6Val = parseFloat(document.getElementById('interest6').value) || 0;
       const i9Val = parseFloat(document.getElementById('interest9').value) || 0;
       const i12Val = parseFloat(document.getElementById('interest12').value) || 0;
+      const closingDateVal = document.getElementById('configOrderClosingDate').value.trim();
 
       if(!num) { alert("Número inválido."); return; }
 
       set(configGlobalRef, {
         whatsappNumber: num,
         descuentoTransferencia: descVal,
-        i3: i3Val, i6: i6Val, i9: i9Val, i12: i12Val
+        i3: i3Val, i6: i6Val, i9: i9Val, i12: i12Val,
+        orderClosingDate: closingDateVal
       }).then(() => alert("¡Configuraciones guardadas!"));
     };
 
@@ -747,6 +810,14 @@
       });
     }
 
+    // ACCION FLECHAS PC
+    window.slideCardImage = function(id, dir) {
+      const slider = document.querySelector(`.card-img-slider[data-id="${id}"]`);
+      if (!slider) return;
+      const imgWidth = slider.clientWidth;
+      slider.scrollBy({ left: dir * imgWidth, behavior: 'smooth' });
+    };
+
     function renderCatalog() {
       const grid = document.getElementById('catalogGrid'); grid.innerHTML = '';
       const filterSizeStr = document.getElementById('sizeFilterInput').value;
@@ -783,12 +854,22 @@
 
         let imagesHtml = imgArray.map(imgSrc => `<img src="${imgSrc}" onclick="openLightbox('${imgSrc}', '${p.id}')">`).join('');
 
+        // Lógica de flechas: Si hay más de 2 imágenes se inyectan los botones en el HTML
+        let arrowsHtml = '';
+        if (imgArray.length > 2) {
+          arrowsHtml = `
+            <button class="nav-arrow prev-arrow" onclick="slideCardImage('${p.id}', -1); event.stopPropagation();">◀</button>
+            <button class="nav-arrow next-arrow" onclick="slideCardImage('${p.id}', 1); event.stopPropagation();">▶</button>
+          `;
+        }
+
         card.innerHTML = `
           <div class="image-frame">
             ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
             ${discountHtml}
             <span class="size-type-badge">${p.isPaused ? 'PAUSADO' : `Horma: [${pScale}]`}</span>
-            <div class="card-img-slider">
+            ${arrowsHtml}
+            <div class="card-img-slider" data-id="${p.id}">
               ${imagesHtml}
             </div>
           </div>
@@ -816,6 +897,21 @@
         grid.appendChild(card);
       });
     }
+
+    // RUTINA AUTOMÁTICA DE CARRUSEL DE PRODUCTOS (Se ejecuta continuamente cada 4 segundos)
+    setInterval(() => {
+      document.querySelectorAll('.card-img-slider').forEach(slider => {
+        if (slider.matches(':hover')) return; // Pausa el autoplay si el cliente tiene el mouse encima
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+        if (maxScroll <= 0) return;
+        
+        if (slider.scrollLeft >= maxScroll - 5) {
+          slider.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
+        }
+      });
+    }, 4000);
 
     function renderCategoryManager() {
       const container = document.getElementById('categoryManagerGrid'); container.innerHTML = '';
@@ -1014,7 +1110,6 @@
         return;
       }
 
-      // 🛡️ Actualización de Métricas en Firebase (Blindado para que no bloquee el envío)
       try {
         update(ref(db, 'productos/' + selectedProductForOrder.id), { whatsapp_clicks: increment(1) })
           .catch(err => console.warn("Aviso: Regla de Firebase denegó métrica clics.", err));
@@ -1025,7 +1120,6 @@
         console.warn("Error capturado en métricas Firebase:", error);
       }
 
-      // 📲 Redirección garantizada a WhatsApp
       const msg = `📦 *NUEVO ENCARGO - DESNIVEL*\n\n` +
                   `👤 *Cliente:* ${name}\n` +
                   `👟 *Modelo:* ${selectedProductForOrder.title}\n` +
@@ -1035,7 +1129,6 @@
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${globalConfig.whatsappNumber}&text=${encodeURIComponent(msg)}`;
       window.open(whatsappUrl, '_blank');
       
-      // Limpieza modal
       closeModal('orderOverlay');
       document.getElementById('whatsappForm').reset();
     });
