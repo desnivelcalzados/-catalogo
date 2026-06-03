@@ -59,9 +59,6 @@
     .logo-container h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 4px; color: white; }
     
     .header-tools { display: flex; align-items: center; gap: 12px; flex-grow: 1; max-width: 600px; justify-content: flex-end;}
-    .search-bar { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.15); font-size: 1rem; background: rgba(255, 255, 255, 0.95); color: var(--dark-charcoal); }
-    
-    .size-filter-select { padding: 11px 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); background: var(--leather-brown); color: white; font-weight: bold; cursor: pointer; font-size: 0.95rem; white-space: nowrap; }
 
     .db-status { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; background: rgba(255,255,255,0.07); padding: 6px 12px; border-radius: 15px; letter-spacing: 1px;}
     .status-dot { width: 11px; height: 11px; border-radius: 50%; background: #ccc; }
@@ -91,16 +88,16 @@
     .order-notice-banner p { font-size: 0.95rem; color: var(--mid-gray); margin-bottom: 8px; line-height: 1.4; }
     .closing-date-badge { display: inline-block; background: var(--alert-bg); color: var(--alert-text); padding: 6px 14px; border-radius: 4px; font-weight: bold; font-size: 0.95rem; border: 1px solid var(--alert-border); }
 
-    /* GUÍA DE TALLES */
-    .embedded-size-guide { background: white; margin: 15px 40px 10px 40px; padding: 30px; border-radius: 8px; border: 1px solid var(--light-gray); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-    .embedded-size-guide h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; text-transform: uppercase; color: var(--dark-charcoal); margin-bottom: 12px; }
-    .important-alert { background: var(--alert-bg); border: 1px solid var(--alert-border); color: var(--alert-text); padding: 16px; border-radius: 6px; margin-bottom: 20px; font-size: 0.98rem; line-height: 1.5; font-weight: 500; }
+    /* GUÍA DE TALLES EXTRA COMPACTA */
+    .embedded-size-guide { background: white; margin: 15px 40px 10px 40px; padding: 12px 15px; border-radius: 6px; border: 1px solid var(--light-gray); box-shadow: 0 2px 8px rgba(0,0,0,0.01); }
+    .embedded-size-guide h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; text-transform: uppercase; color: var(--dark-charcoal); margin-bottom: 6px; }
+    .important-alert { background: var(--alert-bg); border: 1px solid var(--alert-border); color: var(--alert-text); padding: 8px 12px; border-radius: 4px; margin-bottom: 10px; font-size: 0.82rem; line-height: 1.3; font-weight: 500; }
 
-    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border-radius: 6px; border: 1px solid var(--light-gray); }
-    .size-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 1rem; min-width: 500px; }
-    .size-table th, .size-table td { border: 1px solid var(--light-gray); padding: 12px; }
-    .size-table th { background: var(--bg-cream); font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; font-weight: 700; }
-    .highlight-br { background: rgba(110,71,45,0.08); font-weight: bold; color: var(--leather-brown); }
+    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 4px; border: 1px solid var(--light-gray); }
+    .size-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.8rem; min-width: 400px; }
+    .size-table th, .size-table td { border: 1px solid var(--light-gray); padding: 5px 8px; }
+    .size-table th { background: var(--bg-cream); font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; font-weight: 700; font-size: 0.85rem; }
+    .highlight-br { background: rgba(110,71,45,0.05); font-weight: bold; color: var(--leather-brown); }
     .highlight-ar { background: #fffdf3; font-weight: bold; color: #8a6d1c; }
 
     /* NAVEGACIÓN CATEGORÍAS */
@@ -251,8 +248,6 @@
       .logo-img { height: 55px; width: auto; max-width: 100px; margin: 0 auto; }
       .logo-container h1 { font-size: 2.2rem; text-align: center; }
       .header-tools { width: 100%; flex-direction: column; gap: 8px; }
-      .search-bar { width: 100%; order: 2; }
-      .size-filter-select { width: 100%; order: 1; text-align: center; text-align-last: center; }
       .db-status { width: 100%; order: 3; justify-content: center; }
       
       .banner-slider-container { height: 180px; }
@@ -277,10 +272,6 @@
       <h1>DESNIVEL</h1>
     </div>
     <div class="header-tools">
-      <select id="sizeFilterInput" class="size-filter-select" onchange="renderCatalog()">
-        <option value="all">Filtrar por Número (Todos)</option>
-      </select>
-      <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Buscar por modelo, marca...">
       <div class="db-status">
         <span class="status-dot yellow" id="dbStatusDot"></span>
         <span id="dbStatusText">Conectando</span>
@@ -304,16 +295,16 @@
   <section class="embedded-size-guide">
     <h3>Guía de Talles Oficial y Equivalencias</h3>
     <div class="important-alert">
-      ⚠️ <strong>INFORMACIÓN DE COMPRA:</strong> Los calzados importados se rigen por talle <strong>Brasil [BR]</strong> y los nacionales por talle <strong>Argentina [AR]</strong>. Cada par exhibe claramente su escala. Verifique las medidas de su plantilla antes de encargar para asegurar una experiencia premium.
+      ⚠️ Los calzados importados se rigen por talle <strong>Brasil [BR]</strong> y nacionales por <strong>Argentina [AR]</strong>. Verifique las medidas antes de encargar.
     </div>
 
     <div class="table-responsive">
       <table class="size-table">
         <thead>
           <tr>
-            <th class="highlight-br">Talle Brasil (BR)</th>
-            <th class="highlight-ar">Equivalencia Argentina (AR)</th>
-            <th>Medida Plantilla Interna</th>
+            <th class="highlight-br">Talle BR</th>
+            <th class="highlight-ar">Equivalencia AR</th>
+            <th>Plantilla Interna</th>
           </tr>
         </thead>
         <tbody>
@@ -581,7 +572,6 @@
     let bannersList = [];
     let categoriesOrderedList = []; 
     let currentFilter = "all";
-    let searchQuery = "";
     let selectedProductForOrder = null;
     let newProductImages = []; 
     let bannerIntervalId = null;
@@ -592,13 +582,6 @@
       i3: 0, i6: 15, i9: 25, i12: 35,
       orderClosingDate: "A confirmar"
     };
-
-    const selectFilter = document.getElementById('sizeFilterInput');
-    for (let i = 34; i <= 46; i++) {
-      const opt = document.createElement('option');
-      opt.value = i; opt.textContent = `Número ${i}`;
-      selectFilter.appendChild(opt);
-    }
 
     onValue(configGlobalRef, (snapshot) => {
       if(snapshot.val()) { globalConfig = { ...globalConfig, ...snapshot.val() }; }
@@ -765,10 +748,6 @@
       }
     };
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      searchQuery = e.target.value.toLowerCase(); renderCatalog();
-    });
-
     onValue(dbRef, (snapshot) => {
       products = []; const data = snapshot.val();
       if (data) { for (let key in data) { products.push({ id: key, sortOrder: 0, ...data[key] }); } }
@@ -810,7 +789,6 @@
       });
     }
 
-    // ACCION FLECHAS PC
     window.slideCardImage = function(id, dir) {
       const slider = document.querySelector(`.card-img-slider[data-id="${id}"]`);
       if (!slider) return;
@@ -820,19 +798,16 @@
 
     function renderCatalog() {
       const grid = document.getElementById('catalogGrid'); grid.innerHTML = '';
-      const filterSizeStr = document.getElementById('sizeFilterInput').value;
       const isAdmin = document.body.classList.contains('admin-mode');
 
       let filtrados = products.filter(p => {
         if (!isAdmin && p.isPaused) return false;
         const matchCat = currentFilter === 'all' || p.category.toLowerCase().trim() === currentFilter;
-        const matchSearch = p.title.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
-        let matchSizeSelect = (filterSizeStr === 'all') || (p.sizes && p.sizes.includes(filterSizeStr));
-        return matchCat && matchSearch && matchSizeSelect;
+        return matchCat;
       });
 
       if(filtrados.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:40px; color:var(--mid-gray);">No hay productos en esta selección con el filtro activo.</p>';
+        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:40px; color:var(--mid-gray);">No hay productos en esta selección.</p>';
         return;
       }
 
@@ -854,7 +829,6 @@
 
         let imagesHtml = imgArray.map(imgSrc => `<img src="${imgSrc}" onclick="openLightbox('${imgSrc}', '${p.id}')">`).join('');
 
-        // Lógica de flechas: Si hay más de 2 imágenes se inyectan los botones en el HTML
         let arrowsHtml = '';
         if (imgArray.length > 2) {
           arrowsHtml = `
@@ -898,10 +872,9 @@
       });
     }
 
-    // RUTINA AUTOMÁTICA DE CARRUSEL DE PRODUCTOS (Se ejecuta continuamente cada 4 segundos)
     setInterval(() => {
       document.querySelectorAll('.card-img-slider').forEach(slider => {
-        if (slider.matches(':hover')) return; // Pausa el autoplay si el cliente tiene el mouse encima
+        if (slider.matches(':hover')) return; 
         const maxScroll = slider.scrollWidth - slider.clientWidth;
         if (maxScroll <= 0) return;
         
