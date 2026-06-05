@@ -125,8 +125,8 @@
     .form-group label { font-size: 0.85rem; font-weight: 600; }
     .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid var(--light-gray); border-radius: 4px; background: var(--off-white); font-size: 1rem; }
     
-    .type-selector-box { display: flex; gap: 10px; margin-bottom: 5px; }
-    .type-btn { flex: 1; padding: 12px; border: 1px solid var(--light-gray); border-radius: 4px; font-weight: bold; text-align: center; background: var(--off-white); transition: var(--transition); }
+    .type-selector-box { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 5px; }
+    .type-btn { flex: 1; min-width: 140px; padding: 12px 8px; border: 1px solid var(--light-gray); border-radius: 4px; font-weight: bold; text-align: center; background: var(--off-white); transition: var(--transition); font-size: 0.85rem; }
     .type-btn.active { background: var(--leather-brown); color: white; border-color: var(--leather-brown); }
 
     .sizes-grid { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -151,7 +151,10 @@
 
     /* CATÁLOGO */
     .catalog-container { padding: 30px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-    .product-card { background: var(--off-white); border: 1px solid var(--light-gray); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; transition: var(--transition); }
+    .catalog-brand-section { grid-column: 1 / -1; width: 100%; display: contents; }
+    .catalog-brand-title { grid-column: 1 / -1; font-family: 'Bebas Neue', sans-serif; font-size: 2.3rem; letter-spacing: 2px; color: var(--leather-brown); margin: 25px 0 5px 0; border-bottom: 2px solid var(--light-gray); padding-bottom: 5px; text-transform: uppercase; }
+    
+    .product-card { background: var(--off-white); border: 1px solid var(--light-gray); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; transition: var(--transition); height: 100%; }
     .product-card.paused { opacity: 0.5; border: 2px dashed var(--red-del); }
     .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(110,71,45,0.15); }
     
@@ -403,6 +406,7 @@
               <option value="Nuevo">NUEVO</option>
               <option value="Hot">HOT SALE</option>
               <option value="Últimos Pares">ÚLTIMOS PARES</option>
+              <option value="Niños">NIÑOS</option>
             </select>
           </div>
 
@@ -411,6 +415,8 @@
             <div class="type-selector-box">
               <button type="button" id="btnTypeBR" class="type-btn active" onclick="setProductSizeType('BR')">Horma Escala BRASIL [BR]</button>
               <button type="button" id="btnTypeAR" class="type-btn" onclick="setProductSizeType('AR')">Horma Escala ARGENTINA [AR]</button>
+              <button type="button" id="btnTypeKidsBR" class="type-btn" onclick="setProductSizeType('KIDS_BR')">Niños BR [23-35]</button>
+              <button type="button" id="btnTypeKidsAR" class="type-btn" onclick="setProductSizeType('KIDS_AR')">Niños AR [23-35]</button>
             </div>
             <input type="hidden" id="pSizeType" value="BR">
           </div>
@@ -516,7 +522,7 @@
 
   <footer>
     <p>© 2026 Desnivel Calzados.</p>
-    <button class="admin-login-btn" onclick="toggleAdmin()">Modo Administrador</button>
+    <button class="admin-login-btn" onclick="toggleAdmin()">Modo Administrator</button>
   </footer>
 
   <div class="modal-overlay" id="lightboxOverlay">
@@ -718,7 +724,18 @@
     function generateAdminSizeCheckboxes() {
       const container = document.getElementById('sizesContainer'); container.innerHTML = '';
       const type = document.getElementById('pSizeType').value;
-      const start = type === 'BR' ? 34 : 35; const end = type === 'BR' ? 44 : 45;
+      
+      let start = 34;
+      let end = 44;
+      
+      if (type === 'AR') {
+        start = 35;
+        end = 45;
+      } else if (type === 'KIDS_BR' || type === 'KIDS_AR') {
+        start = 23;
+        end = 35;
+      }
+      
       for (let i = start; i <= end; i++) {
         const lbl = document.createElement('label'); lbl.className = 'size-label';
         lbl.innerHTML = `<input type="checkbox" class="size-cb" value="${i}">${i}`;
@@ -730,6 +747,8 @@
       document.getElementById('pSizeType').value = type;
       document.getElementById('btnTypeBR').classList.toggle('active', type === 'BR');
       document.getElementById('btnTypeAR').classList.toggle('active', type === 'AR');
+      document.getElementById('btnTypeKidsBR').classList.toggle('active', type === 'KIDS_BR');
+      document.getElementById('btnTypeKidsAR').classList.toggle('active', type === 'KIDS_AR');
       generateAdminSizeCheckboxes();
     };
 
@@ -811,65 +830,108 @@
         return;
       }
 
-      filtrados.forEach(p => {
-        const card = document.createElement('article'); card.className = `product-card ${p.isPaused ? 'paused' : ''}`;
-        const imgArray = Array.isArray(p.images) ? p.images : ['https://via.placeholder.com/400'];
-        const pScale = p.sizeType || 'BR'; 
+      if (currentFilter === "all") {
+        categoriesOrderedList.forEach(categoryName => {
+          const productsInCat = filtrados.filter(p => p.category.toLowerCase().trim() === categoryName.toLowerCase().trim());
+          if (productsInCat.length > 0) {
+            const sectionWrapper = document.createElement('div');
+            sectionWrapper.className = 'catalog-brand-section';
+            
+            const titleElement = document.createElement('h2');
+            titleElement.className = 'catalog-brand-title';
+            titleElement.textContent = categoryName;
+            sectionWrapper.appendChild(titleElement);
+            grid.appendChild(sectionWrapper);
+
+            productsInCat.forEach(p => {
+              createProductCard(p, grid);
+            });
+          }
+        });
         
-        const tieneStock = p.sizes && p.sizes.length > 0;
-        let tallesTexto = tieneStock ? p.sizes.map(sz => `${sz}`).join(' - ') : 'Agotado';
-        
-        const isCriticalStock = tieneStock && p.sizes.length === 1;
+        const productsWithoutOrderedCat = filtrados.filter(p => !categoriesOrderedList.some(cat => cat.toLowerCase().trim() === p.category.toLowerCase().trim()));
+        if (productsWithoutOrderedCat.length > 0) {
+          const sectionWrapper = document.createElement('div');
+          sectionWrapper.className = 'catalog-brand-section';
+          
+          const titleElement = document.createElement('h2');
+          titleElement.className = 'catalog-brand-title';
+          titleElement.textContent = "Otras Marcas";
+          sectionWrapper.appendChild(titleElement);
+          grid.appendChild(sectionWrapper);
 
-        let discountHtml = '';
-        if(p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
-          const pct = Math.round(((Number(p.oldPrice) - Number(p.price)) / Number(p.oldPrice)) * 100);
-          discountHtml = `<span class="discount-badge">▼ ${pct}% OFF</span>`;
+          productsWithoutOrderedCat.forEach(p => {
+            createProductCard(p, grid);
+          });
         }
+      } else {
+        filtrados.forEach(p => {
+          createProductCard(p, grid);
+        });
+      }
+    }
 
-        let imagesHtml = imgArray.map(imgSrc => `<img src="${imgSrc}" onclick="openLightbox('${imgSrc}', '${p.id}')">`).join('');
+    function createProductCard(p, grid) {
+      const card = document.createElement('article'); card.className = `product-card ${p.isPaused ? 'paused' : ''}`;
+      const imgArray = Array.isArray(p.images) ? p.images : ['https://via.placeholder.com/400'];
+      
+      let pScale = p.sizeType || 'BR';
+      if(pScale === 'KIDS_BR') pScale = 'Niños BR';
+      if(pScale === 'KIDS_AR') pScale = 'Niños AR';
+      
+      const tieneStock = p.sizes && p.sizes.length > 0;
+      let tallesTexto = tieneStock ? p.sizes.map(sz => `${sz}`).join(' - ') : 'Agotado';
+      
+      const isCriticalStock = tieneStock && p.sizes.length === 1;
 
-        let arrowsHtml = '';
-        if (imgArray.length > 2) {
-          arrowsHtml = `
-            <button class="nav-arrow prev-arrow" onclick="slideCardImage('${p.id}', -1); event.stopPropagation();">◀</button>
-            <button class="nav-arrow next-arrow" onclick="slideCardImage('${p.id}', 1); event.stopPropagation();">▶</button>
-          `;
-        }
+      let discountHtml = '';
+      if(p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
+        const pct = Math.round(((Number(p.oldPrice) - Number(p.price)) / Number(p.oldPrice)) * 100);
+        discountHtml = `<span class="discount-badge">▼ ${pct}% OFF</span>`;
+      }
 
-        card.innerHTML = `
-          <div class="image-frame">
-            ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
-            ${discountHtml}
-            <span class="size-type-badge">${p.isPaused ? 'PAUSADO' : `Horma: [${pScale}]`}</span>
-            ${arrowsHtml}
-            <div class="card-img-slider" data-id="${p.id}">
-              ${imagesHtml}
-            </div>
-          </div>
-          <div class="info-box">
-            <span class="cat-lbl">${p.category}</span>
-            <h2 class="title-lbl">${p.title}</h2>
-            <p class="desc-lbl">${p.desc || ''}</p>
-            <div class="sizes-avail ${!tieneStock ? 'out-of-stock-banner' : ''} ${isCriticalStock ? 'critical-stock-alert' : ''}">
-              ${tieneStock ? (isCriticalStock ? `🔥 ¡Último par disponible!: Número ${tallesTexto}` : `Talles: ${tallesTexto}`) : '⚠️ Sin stock disponible'}
-            </div>
-            <div class="price-row">
-              <span class="price-val">$${Number(p.price).toLocaleString('es-AR')}</span>
-              ${p.oldPrice ? `<span class="old-price-val">$${Number(p.oldPrice).toLocaleString('es-AR')}</span>` : ''}
-            </div>
-            <button class="btn-buy" ${!tieneStock ? 'disabled' : ''} onclick="openOrder('${p.id}')">
-              ${p.isPaused ? '🚫 Pausado' : (tieneStock ? '🛒 Encargar Calzado' : '❌ Sin Stock')}
-            </button>
-          </div>
-          <div class="admin-actions">
-            <button type="button" style="color:var(--red-del); font-weight:bold;" onclick="deleteProduct('${p.id}')">✕ Eliminar</button>
-            <button type="button" style="color:var(--discount-tag); font-weight:bold;" onclick="togglePauseProduct('${p.id}')">${p.isPaused ? '👁️ Activar' : '💤 Pausar'}</button>
-            <button type="button" onclick="editProduct('${p.id}')">✏️ Editar</button>
-          </div>
+      let imagesHtml = imgArray.map(imgSrc => `<img src="${imgSrc}" onclick="openLightbox('${imgSrc}', '${p.id}')">`).join('');
+
+      let arrowsHtml = '';
+      if (imgArray.length > 1) {
+        arrowsHtml = `
+          <button class="nav-arrow prev-arrow" onclick="slideCardImage('${p.id}', -1); event.stopPropagation();">◀</button>
+          <button class="nav-arrow next-arrow" onclick="slideCardImage('${p.id}', 1); event.stopPropagation();">▶</button>
         `;
-        grid.appendChild(card);
-      });
+      }
+
+      card.innerHTML = `
+        <div class="image-frame">
+          ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+          ${discountHtml}
+          <span class="size-type-badge">${p.isPaused ? 'PAUSADO' : `Horma: [${pScale}]`}</span>
+          ${arrowsHtml}
+          <div class="card-img-slider" data-id="${p.id}">
+            ${imagesHtml}
+          </div>
+        </div>
+        <div class="info-box">
+          <span class="cat-lbl">${p.category}</span>
+          <h2 class="title-lbl">${p.title}</h2>
+          <p class="desc-lbl">${p.desc || ''}</p>
+          <div class="sizes-avail ${!tieneStock ? 'out-of-stock-banner' : ''} ${isCriticalStock ? 'critical-stock-alert' : ''}">
+            ${tieneStock ? (isCriticalStock ? `🔥 ¡Último par disponible!: Número ${tallesTexto}` : `Talles: ${tallesTexto}`) : '⚠️ Sin stock disponible'}
+          </div>
+          <div class="price-row">
+            <span class="price-val">$${Number(p.price).toLocaleString('es-AR')}</span>
+            ${p.oldPrice ? `<span class="old-price-val">$${Number(p.oldPrice).toLocaleString('es-AR')}</span>` : ''}
+          </div>
+          <button class="btn-buy" ${!tieneStock ? 'disabled' : ''} onclick="openOrder('${p.id}')">
+            ${p.isPaused ? '🚫 Pausado' : (tieneStock ? '🛒 Encargar Calzado' : '❌ Sin Stock')}
+          </button>
+        </div>
+        <div class="admin-actions">
+          <button type="button" style="color:var(--red-del); font-weight:bold;" onclick="deleteProduct('${p.id}')">✕ Eliminar</button>
+          <button type="button" style="color:var(--discount-tag); font-weight:bold;" onclick="togglePauseProduct('${p.id}')">${p.isPaused ? '👁️ Activar' : '💤 Pausar'}</button>
+          <button type="button" onclick="editProduct('${p.id}')">✏️ Editar</button>
+        </div>
+      `;
+      grid.appendChild(card);
     }
 
     setInterval(() => {
@@ -1051,7 +1113,11 @@
       
       const selectSize = document.getElementById('selectedSize');
       selectSize.innerHTML = '<option value="">Elige tu número</option>';
-      const scale = p.sizeType || 'BR';
+      
+      let scale = p.sizeType || 'BR';
+      if(scale === 'KIDS_BR') scale = 'Niños BR';
+      if(scale === 'KIDS_AR') scale = 'Niños AR';
+      
       if (p.sizes) p.sizes.forEach(sz => { selectSize.innerHTML += `<option value="${sz}">${sz} [${scale}]</option>`; });
 
       const selectPayment = document.getElementById('selectedPaymentMethod');
@@ -1076,7 +1142,10 @@
       const name = document.getElementById('clientName').value.trim();
       const sizeSelected = document.getElementById('selectedSize').value;
       const paymentSelected = document.getElementById('selectedPaymentMethod').value;
-      const scale = selectedProductForOrder.sizeType || 'BR';
+      
+      let scale = selectedProductForOrder.sizeType || 'BR';
+      if(scale === 'KIDS_BR') scale = 'Niños BR';
+      if(scale === 'KIDS_AR') scale = 'Niños AR';
       
       if (!sizeSelected) {
         alert("Por favor, selecciona un número antes de continuar.");
